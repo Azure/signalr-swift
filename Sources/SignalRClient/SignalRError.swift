@@ -20,6 +20,7 @@ public enum SignalRError: Error, Equatable {
     case invalidResponseType
     case cannotSentUntilTransportConnected
     case invalidData(String)
+    case invocationError(String)
 
     var localizedDescription: String {
         switch self {
@@ -59,6 +60,8 @@ public enum SignalRError: Error, Equatable {
             return "Cannot send until the transport is connected"
         case .invalidData(let message):
             return "Invalid data: \(message)"
+        case .invocationError(let errorMessage):
+            return "Invocation error: \(errorMessage)"
         }
     }
 }
