@@ -7,14 +7,25 @@ let package = Package(
         .macOS(.v11)
     ],
     products: [
-        .library(name: "SignalRClient", targets: ["SignalRClient"]),
+        .library(name: "SignalRClient", targets: ["SignalRClient"])
     ],
     dependencies: [
+        .package(
+            url: "https://github.com/inaka/EventSource.git", revision: "78934b3"
+        )
     ],
     targets: [
         .target(
-            name: "SignalRClient"
+            name: "SignalRClient",
+            dependencies: [
+                .product(name: "EventSource", package: "EventSource")
+            ]
         ),
-        .testTarget(name: "SignalRClientTests", dependencies: ["SignalRClient"]),
+        .testTarget(
+            name: "SignalRClientTests", dependencies: ["SignalRClient"],
+            swiftSettings: [
+//                .enableExperimentalFeature("StrictConcurrency")
+              ]
+        ),
     ]
 )
