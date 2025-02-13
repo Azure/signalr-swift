@@ -14,11 +14,13 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.onClose { err in }
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             try await Task.sleep(for: .milliseconds(100))
             return (
@@ -48,11 +50,13 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.onClose { err in }
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             try await Task.sleep(for: .milliseconds(100))
             return (
@@ -82,10 +86,12 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             try await Task.sleep(for: .milliseconds(100))
             return (
@@ -112,10 +118,12 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             try await Task.sleep(for: .milliseconds(100))
             return (
@@ -146,10 +154,12 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             try await Task.sleep(for: .milliseconds(100))
             return (StringOrData.string(""), HttpResponse(statusCode: 200))
@@ -175,10 +185,12 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             throw SignalRError.httpTimeoutError
         }
@@ -203,10 +215,12 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         let request = HttpRequest(
-            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat")
+            mockId: "poll", method: .GET, url: "http://signalr.com/hub/chat"
+        )
         await client.mock(mockId: "poll") { request in
             throw SignalRError.invalidDataType
         }
@@ -230,7 +244,8 @@ class LongPollingTransportTests: XCTestCase {
         let logger = Logger(logLevel: .debug, logHandler: logHandler)
         let options = HttpConnectionOptions()
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         await lpt.SetUrl(url: "http://abc")
         await client.mock(mockId: "string") { request in
@@ -253,7 +268,8 @@ class LongPollingTransportTests: XCTestCase {
         let logger = Logger(logLevel: .debug, logHandler: logHandler)
         let options = HttpConnectionOptions()
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.SetRunning(running: true)
         await lpt.SetUrl(url: "http://abc")
         await client.mock(mockId: "stop200") { request in
@@ -305,7 +321,8 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.onClose { err in }
         await client.mock(mockId: "connect") { request in
             try await Task.sleep(for: .milliseconds(100))
@@ -330,7 +347,8 @@ class LongPollingTransportTests: XCTestCase {
         var options = HttpConnectionOptions()
         options.logMessageContent = true
         let lpt = LongPollingTransport(
-            httpClient: client, logger: logger, options: options)
+            httpClient: client, logger: logger, options: options
+        )
         await lpt.onClose { err in }
         await client.mock(mockId: "connect") { request in
             try await Task.sleep(for: .milliseconds(100))
@@ -346,13 +364,13 @@ class LongPollingTransportTests: XCTestCase {
         let running = await lpt.running
         XCTAssertFalse(running)
     }
-    
-    func testHttpRequestAppendDate() async throws{
+
+    func testHttpRequestAppendDate() async throws {
         var request = HttpRequest(method: .DELETE, url: "http://abc", content: .string(""), responseType: .binary, headers: nil, timeout: nil)
         request.appendDateInUrl()
-        XCTAssertEqual(request.url.components(separatedBy: "&").count,2)
+        XCTAssertEqual(request.url.components(separatedBy: "&").count, 2)
         request.appendDateInUrl()
-        XCTAssertEqual(request.url.components(separatedBy: "&").count,2)
+        XCTAssertEqual(request.url.components(separatedBy: "&").count, 2)
     }
 }
 

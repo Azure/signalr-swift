@@ -45,7 +45,8 @@ class TaskCompletionSourceTests: XCTestCase {
             _ = try await tcs.task()
         } catch {
             XCTAssertEqual(
-                error as? SignalRError, SignalRError.noHandshakeMessageReceived)
+                error as? SignalRError, SignalRError.noHandshakeMessageReceived
+            )
         }
         let elapsed = Date().timeIntervalSince(start)
         XCTAssertLessThan(abs(elapsed - 1), 0.5)
@@ -82,7 +83,7 @@ class TaskCompletionSourceTests: XCTestCase {
         let total = 10000
         var tcss: [TaskCompletionSource<Void>] = []
         tcss.reserveCapacity(total)
-        for _ in 1...total {
+        for _ in 1 ... total {
             tcss.append(TaskCompletionSource<Void>())
         }
         let start = Date()

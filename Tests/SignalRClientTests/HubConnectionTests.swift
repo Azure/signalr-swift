@@ -85,7 +85,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -109,7 +109,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(errorHandshakeResponse))
 
@@ -133,7 +133,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Close connection first
         await mockConnection.onClose?(nil)
         // Response a handshake response
@@ -159,11 +159,10 @@ final class HubConnectionTests: XCTestCase {
             try await hubConnection.start()
         }
 
-        defer {task.cancel()}
-        
+        defer { task.cancel() }
+
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-
 
         let err = await whenTaskThrowsTimeout({
             try await self.hubConnection.start()
@@ -171,7 +170,6 @@ final class HubConnectionTests: XCTestCase {
 
         XCTAssertEqual(SignalRError.invalidOperation("Start client while not in a stopped state."), err as? SignalRError)
     }
-
 
     func testStop_CallsStopDuringConnect() async throws {
         hubConnection = HubConnection(
@@ -197,7 +195,7 @@ final class HubConnectionTests: XCTestCase {
         // The moment start is waiting for handshake response but it should throw 
         await hubConnection.stop()
 
-        let err =  await whenTaskThrowsTimeout(startTask, timeout: 1.0)
+        let err = await whenTaskThrowsTimeout(startTask, timeout: 1.0)
         XCTAssertEqual(SignalRError.connectionAborted, err as? SignalRError)
     }
 
@@ -268,7 +266,7 @@ final class HubConnectionTests: XCTestCase {
             } else {
                 Task { await self.hubConnection.processIncomingData(.string(self.errorHandshakeResponse)) } // for reconnect, it always fails
             }
-            
+
             sendExpectation.fulfill()
         }
 
@@ -509,7 +507,7 @@ final class HubConnectionTests: XCTestCase {
             } catch {
                 XCTFail("Unexpected error: \(error)")
             }
-            
+
         }
 
         let startTask = Task { try await hubConnection.start() }
@@ -573,7 +571,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -609,7 +607,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -650,7 +648,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -690,7 +688,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -732,7 +730,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -777,7 +775,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -828,7 +826,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -852,7 +850,7 @@ final class HubConnectionTests: XCTestCase {
         let invocationId = "1"
         let streamItemMessage1 = StreamItemMessage(invocationId: invocationId, item: AnyEncodable(123), headers: nil)
         await hubConnection.processIncomingData(try hubProtocol.writeMessage(message: streamItemMessage1))
-        
+
         // Assert
         let error = await whenTaskThrowsTimeout(invokeTask, timeout: 1.0)
         XCTAssertEqual(error as? SignalRError, SignalRError.invalidOperation("Cannot convert the result of the invocation to the specified type."))
@@ -871,7 +869,7 @@ final class HubConnectionTests: XCTestCase {
 
         // HubConnect start handshake
         await fulfillment(of: [expectation], timeout: 1.0)
-        
+
         // Response a handshake response
         await hubConnection.processIncomingData(.string(successHandshakeResponse))
 
@@ -953,4 +951,3 @@ final class HubConnectionTests: XCTestCase {
         }
     }
 }
-

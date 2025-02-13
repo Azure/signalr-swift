@@ -9,8 +9,7 @@ final class MessagePackHubProtocol: HubProtocol {
     let transferFormat: TransferFormat = .binary
 
     func parseMessages(input: StringOrData, binder: any InvocationBinder) throws
-        -> [any HubMessage]
-    {
+    -> [any HubMessage] {
         var data: Data
         switch input {
         case .string(_):
@@ -25,7 +24,8 @@ final class MessagePackHubProtocol: HubProtocol {
         for message in messages {
             guard
                 let hubMessage = try parseMessage(
-                    message: message, binder: binder)
+                    message: message, binder: binder
+                )
             else {
                 continue
             }
@@ -101,9 +101,8 @@ final class MessagePackHubProtocol: HubProtocol {
     }
 
     func parseMessage(message: Data, binder: any InvocationBinder)
-        throws -> HubMessage?
-    {
-        let (msgpackElement, _ ) = try MsgpackElement.parse(data: message)
+    throws -> HubMessage? {
+        let (msgpackElement, _) = try MsgpackElement.parse(data: message)
         let decoder = MsgpackDecoder()
         try decoder.loadMsgpackElement(from: msgpackElement)
         var container = try decoder.unkeyedContainer()
@@ -139,8 +138,9 @@ final class MessagePackHubProtocol: HubProtocol {
                 InvocationMessage(
                     target: target, arguments: AnyEncodableArray(arguments),
                     streamIds: [],
-                    headers: headers, invocationId: invocationId)
-            
+                    headers: headers, invocationId: invocationId
+                )
+
         case MessageType.streamItem:
             guard container.count! >= 4 else {
                 throw SignalRError.invalidData(
@@ -157,8 +157,9 @@ final class MessagePackHubProtocol: HubProtocol {
             let item = try container.decode(streamItemType)
             return StreamItemMessage(
                 invocationId: invocationId, item: AnyEncodable(item),
-                headers: headers)
-            
+                headers: headers
+            )
+
         case MessageType.completion:
             guard container.count! >= 4 else {
                 throw SignalRError.invalidData(
@@ -198,7 +199,8 @@ final class MessagePackHubProtocol: HubProtocol {
             }
             return CompletionMessage(
                 invocationId: invocationId, error: error,
-                result: AnyEncodable(result), headers: headers)
+                result: AnyEncodable(result), headers: headers
+            )
 
         case MessageType.cancelInvocation:
             guard container.count! >= 3 else {
@@ -209,11 +211,12 @@ final class MessagePackHubProtocol: HubProtocol {
             let invocationId = try container.decode(String?.self)
             return CancelInvocationMessage(
                 invocationId: invocationId,
-                headers: headers)
-            
+                headers: headers
+            )
+
         case MessageType.ping:
             return PingMessage()
-            
+
         case MessageType.close:
             guard container.count! >= 2 else {
                 throw SignalRError.invalidData(
@@ -223,7 +226,7 @@ final class MessagePackHubProtocol: HubProtocol {
             let allowReconnect =
                 container.isAtEnd ? nil : try container.decode(Bool?.self)
             return CloseMessage(error: err, allowReconnect: allowReconnect)
-            
+
         case MessageType.ack:
             guard container.count! >= 2 else {
                 throw SignalRError.invalidData(
@@ -231,7 +234,7 @@ final class MessagePackHubProtocol: HubProtocol {
             }
             let sequenceId = try container.decode(Int64.self)
             return AckMessage(sequenceId: sequenceId)
-            
+
         case MessageType.sequence:
             guard container.count! >= 2 else {
                 throw SignalRError.invalidData(
@@ -239,7 +242,7 @@ final class MessagePackHubProtocol: HubProtocol {
             }
             let sequenceId = try container.decode(Int64.self)
             return SequenceMessage(sequenceId: sequenceId)
-            
+
         default:
             // StreamInvocation is not supported at client side
             return nil
