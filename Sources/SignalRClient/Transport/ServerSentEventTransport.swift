@@ -33,7 +33,8 @@ actor ServerSentEventTransport: Transport {
         }
 
         logger.log(
-            level: .debug, message: "(SSE transport) Connecting.")
+            level: .debug, message: "(SSE transport) Connecting."
+        )
 
         self.url = url
         var url = url
@@ -51,7 +52,7 @@ actor ServerSentEventTransport: Transport {
             self.logger.log(
                 level: .debug,
                 message:
-                    "(SSE) data received. \(message.getDataDetail(includeContent: self.options.logMessageContent ?? false))"
+                "(SSE) data received. \(message.getDataDetail(includeContent: self.options.logMessageContent ?? false))"
             )
             await self.receiveHandler?(message)
         }
@@ -60,7 +61,8 @@ actor ServerSentEventTransport: Transport {
 
         self.eventSource = eventSource
         logger.log(
-            level: .information, message: "SSE connected to \(self.url!)")
+            level: .information, message: "SSE connected to \(self.url!)"
+        )
     }
 
     func send(_ requestData: StringOrData) async throws {
@@ -70,16 +72,17 @@ actor ServerSentEventTransport: Transport {
         logger.log(
             level: .debug,
             message:
-                "(SSE transport) sending data. \(requestData.getDataDetail(includeContent: options.logMessageContent ?? false))"
+            "(SSE transport) sending data. \(requestData.getDataDetail(includeContent: options.logMessageContent ?? false))"
         )
         let request = HttpRequest(
             method: .POST, url: self.url!, content: requestData,
-            options: options)
+            options: options
+        )
         let (_, response) = try await httpClient.send(request: request)
         logger.log(
             level: .debug,
             message:
-                "(SSE transport) request complete. Response status: \(response.statusCode)."
+            "(SSE transport) request complete. Response status: \(response.statusCode)."
         )
     }
 
@@ -133,8 +136,8 @@ final class DefaultEventSourceAdaptor: EventSourceAdaptor, @unchecked Sendable {
                 self.eventSource = eventSource
             }
         }
-        
-        messageStream = AsyncStream{ continuation in
+
+        messageStream = AsyncStream { continuation in
             eventSource.onComplete { statusCode, err in
                 Task {
                     let connectFail = await openTcs.trySetResult(
@@ -142,13 +145,13 @@ final class DefaultEventSourceAdaptor: EventSourceAdaptor, @unchecked Sendable {
                     self.logger.log(
                         level: .debug,
                         message:
-                            "(Event Source) \(connectFail ? "Failed to open.": "Disconnected.").\(statusCode == nil ? "" : " StatusCode: \(statusCode!).") \(err == nil ? "": " Error: \(err!).")"
+                        "(Event Source) \(connectFail ? "Failed to open." : "Disconnected.").\(statusCode == nil ? "" : " StatusCode: \(statusCode!).") \(err == nil ? "" : " Error: \(err!).")"
                     )
                     continuation.finish()
                     await self.close(err: err)
                 }
             }
-            
+
             eventSource.onMessage { data in
                 continuation.yield(data)
             }

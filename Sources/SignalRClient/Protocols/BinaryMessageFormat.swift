@@ -38,7 +38,7 @@ class BinaryMessageFormat {
             if index + Int(number) > data.count {
                 throw SignalRError.incompleteMessage
             }
-            let message = data.subdata(in: index..<(index + Int(number)))
+            let message = data.subdata(in: index ..< (index + Int(number)))
             messages.append(message)
             index += Int(number)
         }

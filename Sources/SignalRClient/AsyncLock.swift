@@ -15,13 +15,13 @@ class AsyncLock {
             defer {
                 lock.signal()
             }
-            
+
             isLocked = true
             return
         }
 
         await withCheckedContinuation { continuation in
-            defer {lock.signal()}
+            defer { lock.signal() }
             waitQueue.append(continuation)
         }
     }

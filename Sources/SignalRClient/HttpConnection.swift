@@ -3,7 +3,7 @@
 
 import Foundation
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+    import FoundationNetworking
 #endif
 
 // MARK: - Enums and Protocols
@@ -105,7 +105,7 @@ actor HttpConnection: ConnectionProtocol {
         get async {
             return inherentKeepAlivePrivate
         }
-     }
+    }
 
     private var onReceive: Transport.OnReceiveHandler?
     private var onClose: Transport.OnCloseHander?
@@ -134,7 +134,7 @@ actor HttpConnection: ConnectionProtocol {
         onReceive = handler
     }
 
-    func onClose(_ handler: @escaping Transport.OnCloseHander) async{
+    func onClose(_ handler: @escaping Transport.OnCloseHander) async {
         onClose = handler
     }
 
@@ -294,7 +294,7 @@ actor HttpConnection: ConnectionProtocol {
         logger.log(level: .debug, message: "Sending negotiation request: \(negotiateUrl)")
         do {
             let request = HttpRequest(method: .POST, url: negotiateUrl, options: options)
-            
+
             let (message, response) = try await httpClient.send(request: request)
 
             if response.statusCode != 200 {
@@ -368,7 +368,7 @@ actor HttpConnection: ConnectionProtocol {
 
     private func startTransport(url: String, transferFormat: TransferFormat) async throws {
         await transport!.onReceive(self.onReceive)
-        await transport!.onClose  { [weak self] error in
+        await transport!.onClose { [weak self] error in
             guard let self = self else { return }
             await self.stopConnection(error: error)
         }
@@ -448,19 +448,19 @@ actor HttpConnection: ConnectionProtocol {
 
     private func constructTransport(transport: HttpTransportType) async throws -> Transport {
         switch transport {
-            case .webSockets:
-                return WebSocketTransport(
-                    accessTokenFactory: accessTokenFactory,
-                    logger: logger,
-                    headers: options.headers ?? [:]
-                )
-            case .serverSentEvents:
-                let accessToken = await self.httpClient.accessToken
-                return ServerSentEventTransport(httpClient: self.httpClient, accessToken: accessToken, logger: logger, options: options)
-            case .longPolling:
-                return LongPollingTransport(httpClient: httpClient, logger: logger, options: options)
-            default:
-                throw SignalRError.unsupportedTransport("Unkonwn transport type '\(transport)'.")
+        case .webSockets:
+            return WebSocketTransport(
+                accessTokenFactory: accessTokenFactory,
+                logger: logger,
+                headers: options.headers ?? [:]
+            )
+        case .serverSentEvents:
+            let accessToken = await self.httpClient.accessToken
+            return ServerSentEventTransport(httpClient: self.httpClient, accessToken: accessToken, logger: logger, options: options)
+        case .longPolling:
+            return LongPollingTransport(httpClient: httpClient, logger: logger, options: options)
+        default:
+            throw SignalRError.unsupportedTransport("Unkonwn transport type '\(transport)'.")
         }
     }
 

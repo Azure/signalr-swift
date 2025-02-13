@@ -28,15 +28,18 @@ actor LongPollingTransport: Transport {
         // MARK: Here's an assumption that the connect won't be called twice
         self.url = url
         logger.log(
-            level: .debug, message: "(LongPolling transport) Connecting.")
+            level: .debug, message: "(LongPolling transport) Connecting."
+        )
 
         var pollRequest = HttpRequest(
             method: .GET, url: url, responseType: transferFormat,
-            options: options)
+            options: options
+        )
         pollRequest.appendDateInUrl()
         logger.log(
             level: .debug,
-            message: "(LongPolling transport) polling: \(pollRequest.url).")
+            message: "(LongPolling transport) polling: \(pollRequest.url)."
+        )
 
         let (_, response) = try await httpClient.send(request: pollRequest)
 
@@ -44,7 +47,7 @@ actor LongPollingTransport: Transport {
             logger.log(
                 level: .error,
                 message:
-                    "(LongPolling transport) Unexpected response code: \(response.statusCode)."
+                "(LongPolling transport) Unexpected response code: \(response.statusCode)."
             )
             self.closeError = SignalRError.unexpectedResponseCode(
                 response.statusCode)
@@ -66,7 +69,8 @@ actor LongPollingTransport: Transport {
                 logger.log(
                     level: .debug,
                     message:
-                        "(LongPolling transport) polling: \(pollRequest.url).")
+                    "(LongPolling transport) polling: \(pollRequest.url)."
+                )
 
                 let (message, response) = try await httpClient.send(
                     request: pollRequest)
@@ -75,14 +79,14 @@ actor LongPollingTransport: Transport {
                     logger.log(
                         level: .information,
                         message:
-                            "(LongPolling transport) Poll terminated by server."
+                        "(LongPolling transport) Poll terminated by server."
                     )
                     self.running = false
                 } else if response.statusCode != 200 {
                     logger.log(
                         level: .error,
                         message:
-                            "(LongPolling transport) Unexpected response code: \(response.statusCode)."
+                        "(LongPolling transport) Unexpected response code: \(response.statusCode)."
                     )
                     self.closeError = SignalRError.unexpectedResponseCode(
                         response.statusCode)
@@ -91,14 +95,14 @@ actor LongPollingTransport: Transport {
                         logger.log(
                             level: .debug,
                             message:
-                                "(LongPolling transport) data received. \(message.getDataDetail(includeContent: options.logMessageContent ?? false))"
+                            "(LongPolling transport) data received. \(message.getDataDetail(includeContent: options.logMessageContent ?? false))"
                         )
                         await self.onReceiveHandler?(message)
                     } else {
                         logger.log(
                             level: .debug,
                             message:
-                                "(LongPolling transport) Poll timed out, reissuing."
+                            "(LongPolling transport) Poll timed out, reissuing."
                         )
                     }
                 }
@@ -108,17 +112,16 @@ actor LongPollingTransport: Transport {
                     logger.log(
                         level: .debug,
                         message:
-                            "(LongPolling transport) Poll errored after shutdown: \(error)"
+                        "(LongPolling transport) Poll errored after shutdown: \(error)"
                     )
                 } else {
                     if let err = error as? SignalRError,
-                        err == SignalRError.httpTimeoutError
-                    {
+                       err == SignalRError.httpTimeoutError {
                         // Ignore timeouts and reissue the poll.
                         logger.log(
                             level: .debug,
                             message:
-                                "(LongPolling transport) Poll timed out, reissuing."
+                            "(LongPolling transport) Poll timed out, reissuing."
                         )
                     } else {
                         // Close the connection with the error as the result.
@@ -130,7 +133,8 @@ actor LongPollingTransport: Transport {
         }
 
         logger.log(
-            level: .debug, message: "(LongPolling transport) Polling complete.")
+            level: .debug, message: "(LongPolling transport) Polling complete."
+        )
         if !Task.isCancelled {
             await raiseClose()
         }
@@ -144,22 +148,24 @@ actor LongPollingTransport: Transport {
         logger.log(
             level: .debug,
             message:
-                "(LongPolling transport) sending data. \(requestData.getDataDetail(includeContent: options.logMessageContent ?? false))"
+            "(LongPolling transport) sending data. \(requestData.getDataDetail(includeContent: options.logMessageContent ?? false))"
         )
         let request = HttpRequest(
             method: .POST, url: self.url!, content: requestData,
-            options: options)
+            options: options
+        )
         let (_, response) = try await httpClient.send(request: request)
         logger.log(
             level: .debug,
             message:
-                "(LongPolling transport) request complete. Response status: \(response.statusCode)."
+            "(LongPolling transport) request complete. Response status: \(response.statusCode)."
         )
     }
 
     func stop(error: (any Error)?) async throws {
         logger.log(
-            level: .debug, message: "(LongPolling transport) Stopping polling.")
+            level: .debug, message: "(LongPolling transport) Stopping polling."
+        )
         self.running = false
         self.receiving?.cancel()
 
@@ -168,40 +174,43 @@ actor LongPollingTransport: Transport {
         logger.log(
             level: .debug,
             message:
-                "(LongPolling transport) sending DELETE request to \(String(describing: self.url))"
+            "(LongPolling transport) sending DELETE request to \(String(describing: self.url))"
         )
 
         do {
             let deleteRequest = HttpRequest(
-                method: .DELETE, url: self.url!, options: options)
+                method: .DELETE, url: self.url!, options: options
+            )
             let (_, response) = try await httpClient.send(
                 request: deleteRequest)
             if response.statusCode == 404 {
                 logger.log(
                     level: .debug,
                     message:
-                        "(LongPolling transport) A 404 response was returned from sending a DELETE request."
+                    "(LongPolling transport) A 404 response was returned from sending a DELETE request."
                 )
             } else if response.ok() {
                 logger.log(
                     level: .debug,
-                    message: "(LongPolling transport) DELETE request accepted.")
+                    message: "(LongPolling transport) DELETE request accepted."
+                )
             } else {
                 logger.log(
                     level: .debug,
                     message:
-                        "(LongPolling transport) Unexpected response code sending a DELETE request: \(response.statusCode)"
+                    "(LongPolling transport) Unexpected response code sending a DELETE request: \(response.statusCode)"
                 )
             }
         } catch {
             logger.log(
                 level: .debug,
                 message:
-                    "(LongPolling transport) Error sending a DELETE request: \(error)"
+                "(LongPolling transport) Error sending a DELETE request: \(error)"
             )
         }
         logger.log(
-            level: .debug, message: "(LongPolling transport) Stop finished.")
+            level: .debug, message: "(LongPolling transport) Stop finished."
+        )
 
         await raiseClose()
     }
@@ -222,7 +231,7 @@ actor LongPollingTransport: Transport {
         logger.log(
             level: .debug,
             message:
-                "(LongPolling transport) Firing onclose event.\(closeError == nil ? "":" Error: \(closeError!)")"
+            "(LongPolling transport) Firing onclose event.\(closeError == nil ? "" : " Error: \(closeError!)")"
         )
         await onCloseHandler(self.closeError)
     }
@@ -230,10 +239,10 @@ actor LongPollingTransport: Transport {
 
 extension HttpRequest {
     mutating func appendDateInUrl() {
-        if self.url.last != Character("&"){
+        if self.url.last != Character("&") {
             self.url.append("&")
         }
         self.url = self.url.components(separatedBy: "_=").first!.appending(
-            "_=\(Int64((Date().timeIntervalSince1970*1000)))")
+            "_=\(Int64((Date().timeIntervalSince1970 * 1000)))")
     }
 }

@@ -38,7 +38,8 @@ class EventSource: NSObject, URLSessionDataDelegate {
         config.timeoutIntervalForRequest = TimeInterval.infinity
         config.timeoutIntervalForResource = TimeInterval.infinity
         self.urlSession = URLSession(
-            configuration: config, delegate: self, delegateQueue: nil)
+            configuration: config, delegate: self, delegateQueue: nil
+        )
         self.urlSession!.dataTask(with: url).resume()
     }
 
